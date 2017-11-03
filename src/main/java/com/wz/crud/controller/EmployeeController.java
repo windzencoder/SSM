@@ -23,7 +23,7 @@ public class EmployeeController {
 	 * 查询员工 分页查询
 	 * @return
 	 */
-	@RequestMapping("/emp")
+	@RequestMapping("/emps")
 	public String getEmps(@RequestParam(value="pn", defaultValue="1") Integer pn, Model model){
 		
 		//传入页码，页面大小
