@@ -1,25 +1,29 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 	pageContext.setAttribute("APP_PATH", request.getContextPath());
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>员工列表</title>
-    <!-- Bootstrap -->
-    <link href="${APP_PATH }/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script type="text/javascript" src="${APP_PATH }/static/js/jquery-2.1.4.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script type="text/javascript" src="${APP_PATH }/static/bootstrap/js/bootstrap.min.js"></script>
-    
-  </head>
-  <body>
-	
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>员工列表</title>
+<!-- Bootstrap -->
+<link href="${APP_PATH }/static/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet">
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script type="text/javascript"
+	src="${APP_PATH }/static/js/jquery-2.1.4.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script type="text/javascript"
+	src="${APP_PATH }/static/bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
 	<div class="container">
 		<!-- 标题 -->
 		<div class="row">
@@ -30,7 +34,7 @@
 		<!-- 按钮 -->
 		<div class="row">
 			<div class="clo-md-4 col-md-offset-8 text-right">
-				<button class="btn btn-primary">新增</button>
+				<button class="btn btn-primary" id="emp_add_modal_btn">新增</button>
 				<button class="btn btn-danger">删除</button>
 			</div>
 		</div>
@@ -49,7 +53,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					
+
 					</tbody>
 
 				</table>
@@ -58,20 +62,78 @@
 		<!-- 显示分页 -->
 		<div class="row">
 			<!-- 文字信息 -->
-			<div class="col-md-6 text-left" id="page_info_area">
-				
-			</div>
+			<div class="col-md-6 text-left" id="page_info_area"></div>
 			<!-- 分页信息 -->
-			<div class="col-md-6 text-right" id="page_nav_area">
-				
+			<div class="col-md-6 text-right" id="page_nav_area"></div>
+		</div>
+	</div>
+
+	<!-- 员工添加模态框 -->
+	<div class="modal fade" id="empAddModel" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">员工添加</h4>
+				</div>
+				<div class="modal-body">
+					<!-- 表单 -->
+					<form class="form-horizontal">
+
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">empName</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="empName_add_input"
+									name="empName" placeholder="empName">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">email</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="email_add_input"
+									name="email" placeholder="email@123.com">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">gender</label>
+							<div class="col-sm-10">
+								<label class="checkbox-inline"> <input type="radio"
+									name="gender" id="gender1_add_input" value="M"
+									checked="checked"> 男
+								</label> <label class="checkbox-inline"> <input type="radio"
+									name="gender" id="gender2_add_input" value="F"> 女
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">deptName</label>
+							<div class="col-sm-4">
+								<select class="form-control" name="dId" id="dept_select">
+									
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary">保存</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	
+
+
+
 	<script type="text/javascript">
 		//页面加载完成后，直接发送ajax请求，得到分页数据
 		$(function(){
 			to_page(1);//跳转到第一页
+
 		});
 		
 		//跳转到pn页
@@ -87,6 +149,30 @@
 					//2.分页信息
 					build_page_info(result);
 					build_page_nav(result)
+				}
+			});
+		}
+		
+		//新增员工 模态框
+		$("#emp_add_modal_btn").click(function(){
+			//查询部门信息
+			getDepts();
+			$('#empAddModel').modal({
+				backdrop:false
+			});
+		});
+		//查询所有的部门信息并显示在下拉列表中
+		function getDepts(){
+			$.ajax({
+				url:"${APP_PATH}/depts",
+				type:"GET",
+				success:function(result){
+					alert(JSON.stringify(result));
+					//显示部门
+					$.each(result.extend.depts, function(){
+						$("#dept_select").append($("<option></option>").append(this.deptName).attr("value", this.deptId));
+					});
+					
 				}
 			});
 		}
@@ -191,6 +277,6 @@
 		}
 	
 	</script>
-	
-  </body>
+
+</body>
 </html>
