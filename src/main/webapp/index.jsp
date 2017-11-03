@@ -121,7 +121,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="emp_save_btn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -130,6 +130,9 @@
 
 
 	<script type="text/javascript">
+		
+		var totalRecord;//总记录数
+		
 		//页面加载完成后，直接发送ajax请求，得到分页数据
 		$(function(){
 			to_page(1);//跳转到第一页
@@ -167,7 +170,7 @@
 				url:"${APP_PATH}/depts",
 				type:"GET",
 				success:function(result){
-					alert(JSON.stringify(result));
+					//alert(JSON.stringify(result));
 					//显示部门
 					$.each(result.extend.depts, function(){
 						$("#dept_select").append($("<option></option>").append(this.deptName).attr("value", this.deptId));
@@ -177,6 +180,24 @@
 			});
 		}
 		
+		//员工新增 保存事件
+		$("#emp_save_btn").click(function(){
+			var data = $("#empAddModel form").serialize();
+			//模态框数据提交到服务器
+			$.ajax({
+				url:"${APP_PATH}/emp",
+				data: data,
+				type:"POST",
+				success:function(result){
+					//alert(result.msg);
+					//关闭模态框
+					$('#empAddModel').modal('hide');
+					//来到最后一页
+					to_page(totalRecord);
+				}
+			});
+		})
+		
 		//解析分页信息
 		function build_page_info(result){
 			//清空
@@ -184,6 +205,7 @@
 			$('#page_info_area').append("当前"+result.extend.pageInfo.pageNum
 					+"第页，总共"+result.extend.pageInfo.pages+"页，总"
 					+result.extend.pageInfo.total+"记录数");
+			totalRecord = result.extend.pageInfo.total;//保存总页数
 		}
 		
 		//解析显示分页条
