@@ -11,7 +11,20 @@ public class Employee {
 
     private Integer dId;
     
-    //带部门的查询信息
+    public Employee() {
+		super();
+	}
+
+	public Employee(Integer empId, String empName, String gender, String email, Integer dId) {
+		super();
+		this.empId = empId;
+		this.empName = empName;
+		this.gender = gender;
+		this.email = email;
+		this.dId = dId;
+	}
+
+	//带部门的查询信息
     private Department department;
 
     public Department getDepartment() {
