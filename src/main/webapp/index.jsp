@@ -446,7 +446,8 @@
 				var delBtn = $('<button></button>').addClass("btn btn-danger btn-sm delete_btn")
 					.append($('<span></span>').addClass("glyphicon glyphicon-trash"))
 					.append("删除");
-				
+				//为删除按钮添加自定义的属性，来表示当期员工的id
+				delBtn.attr("delete-id", item.empId);
 				
 				var btnTd = $('<td></td>').append(editBtn).append(" ").append(delBtn);
 				$('<tr></tr>').append(empIdTd)
@@ -531,6 +532,26 @@
 				}
 			});
 			
+		});
+		
+		
+		//单个删除
+		$(document).on("click", ".delete_btn", function(){
+			//alert("delete");
+			//alert($(this).parents("tr").find("td:eq(1)").text());
+			
+			var empName = $(this).parents("tr").find("td:eq(1)").text();
+			if(confirm("确认删除"+empName+"吗?")){
+				$.ajax({
+					url:"${APP_PATH}/emp/" + $(this).attr("delete-id"),
+					type:"DELETE",
+					success:function(result){
+						//alert(JSON.stringify(result));
+						alert(result.msg);
+						to_page(currentPage);
+					}
+				})
+			}
 		});
 	
 	</script>

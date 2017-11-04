@@ -30,6 +30,18 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 	
 	/**
+	 * 员工删除
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/emp/{id}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public Msg deleteEmpById(@PathVariable("id") Integer id){
+		employeeService.deleteEmp(id);
+		return Msg.success();
+	}
+	
+	/**
 	 * 如果直接发送ajax的put请求，请求体中有数据，但是employee封装不上
 	 * 原因是：Tomcat
 	 * 1.将请求体中的数据，封装为一个map
@@ -39,6 +51,9 @@ public class EmployeeController {
 	 * Ajax发送PUT请求引发的血案：
 	 * PUT请求，请求体中的数据，request.getParameter("empName")为null
 	 * Tomcat一看是put请求，就不会封装请求体中的数据为map，只有post请求才封装
+	 * 
+	 * 如果我们要能支持直接发送PUT之类的请求还有封装请求体中的数据
+	 * 需配置HttpPutFormContentFilter过滤器，它将请求体中的数据解析包装成一个map，request被重写包装
 	 * 
 	 * 更新用户信息
 	 * @return
