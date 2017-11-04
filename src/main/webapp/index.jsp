@@ -128,6 +128,68 @@
 			</div>
 		</div>
 	</div>
+	
+	
+	<!-- 员工修改模态框 -->
+	<div class="modal fade" id="empUpdateModel" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">员工修改</h4>
+				</div>
+				<div class="modal-body">
+					<!-- 表单 -->
+					<form class="form-horizontal">
+
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">empName</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="empName_update_input"
+									name="empName" placeholder="empName">
+								<span class="help-block"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">email</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="email_update_input"
+									name="email" placeholder="email@123.com">
+								<span class="help-block"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">gender</label>
+							<div class="col-sm-10">
+								<label class="checkbox-inline"> <input type="radio"
+									name="gender" id="gender1_update_input" value="M"
+									checked="checked"> 男
+								</label> <label class="checkbox-inline"> <input type="radio"
+									name="gender" id="gender2_update_input" value="F"> 女
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">deptName</label>
+							<div class="col-sm-4">
+								<select class="form-control" name="dId" id="dept_select">
+									
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="emp_update_btn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 
@@ -163,10 +225,10 @@
 			//清除模态框表单数据
 			reset_form("#empAddModel form");
 			//查询部门信息
-			getDepts();
+			getDepts("#empAddModel select");
 			//显示模态框
 			$('#empAddModel').modal({
-				backdrop:false
+				backdrop:"static"
 			});
 		});
 		
@@ -179,7 +241,8 @@
 		}
 		
 		//查询所有的部门信息并显示在下拉列表中
-		function getDepts(){
+		function getDepts(ele){
+			$(ele).empty();//清空
 			$.ajax({
 				url:"${APP_PATH}/depts",
 				type:"GET",
@@ -187,7 +250,7 @@
 					//alert(JSON.stringify(result));
 					//显示部门
 					$.each(result.extend.depts, function(){
-						$("#dept_select").append($("<option></option>").append(this.deptName).attr("value", this.deptId));
+						$(ele).append($("<option></option>").append(this.deptName).attr("value", this.deptId));
 					});
 				}
 			});
@@ -374,10 +437,10 @@
 				var genderTd = $('<td></td>').append(gender);
 				var emailTd = $('<td></td>').append(item.email);
 				var deptNameTd = $('<td></td>').append(item.department.deptName);
-				var editBtn = $('<button></button>').addClass("btn btn btn-primary btn-sm")
+				var editBtn = $('<button></button>').addClass("btn btn btn-primary btn-sm edit_btn")
 					.append($('<span></span>').addClass("glyphicon glyphicon-pencil"))
 					.append("编辑");
-				var delBtn = $('<button></button>').addClass("btn btn-danger btn-sm")
+				var delBtn = $('<button></button>').addClass("btn btn-danger btn-sm delete_btn")
 					.append($('<span></span>').addClass("glyphicon glyphicon-trash"))
 					.append("删除");
 				var btnTd = $('<td></td>').append(editBtn).append(" ").append(delBtn);
@@ -390,6 +453,17 @@
 					.appendTo($('#emps_table tbody'));
 			})
 		}
+		
+		//编辑按钮事件
+		$(document).on("click", ".edit_btn", function(){
+			//alert("edit");
+			//1.查出部门信息，显示部门列表
+			getDepts("#empUpdateModel select");
+			//显示模态框
+			$('#empUpdateModel').modal({
+				backdrop:"static"
+			});
+		});
 	
 	</script>
 
