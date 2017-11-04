@@ -89,6 +89,7 @@
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="empName_add_input"
 									name="empName" placeholder="empName">
+								<span class="help-block"></span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -96,6 +97,7 @@
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="email_add_input"
 									name="email" placeholder="email@123.com">
+								<span class="help-block"></span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -175,13 +177,16 @@
 					$.each(result.extend.depts, function(){
 						$("#dept_select").append($("<option></option>").append(this.deptName).attr("value", this.deptId));
 					});
-					
 				}
 			});
 		}
 		
 		//员工新增 保存事件
 		$("#emp_save_btn").click(function(){
+			//先对要提交给服务器的数据进行校验
+			if(!validate_add_form()){
+				return false;
+			}
 			var data = $("#empAddModel form").serialize();
 			//模态框数据提交到服务器
 			$.ajax({
@@ -197,6 +202,48 @@
 				}
 			});
 		})
+		
+		//校验员工提交表单数据
+		function validate_add_form(){
+			//拿到校验的数据
+			var empName = $("#empName_add_input").val();
+			//用户名正则表达式匹配
+			var regName = /(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,5})/;
+			//alert(regName.test(empName));
+			if(!regName.test(empName)){
+				//alert("用户名可以是2-5位中文或者6-16位英文和数字的组合");
+				show_validate_msg("#empName_add_input", "error", "用户名可以是2-5位中文或者6-16位英文和数字的组合");
+				return false;
+			}else{
+				show_validate_msg("#empName_add_input", "success", "");
+			}
+			//邮箱校验
+			var email = $("#email_add_input").val();
+			var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+			if(!regEmail.test(email)){
+				//alert("邮箱格式不正确");
+				show_validate_msg("#email_add_input", "error", "邮箱格式不正确");
+				return false;
+			}else{
+				show_validate_msg("#email_add_input", "success", "");
+			}
+			return false;
+		}
+		
+		//显示校验信息
+		function show_validate_msg(ele, status, msg){
+			//清除当期元素验证状态
+			$(ele).parent().removeClass("has-success has-error");
+			$(ele).next("span").text("");
+			if("success" == status){//校验成功
+				$(ele).parent().addClass("has-success");
+				$(ele).next("span").text(msg);
+			}
+			if("error" == status){//校验失败
+				$(ele).parent().addClass("has-error");
+				$(ele).next("span").text(msg);
+			}
+		}
 		
 		//解析分页信息
 		function build_page_info(result){
