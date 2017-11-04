@@ -181,6 +181,23 @@
 			});
 		}
 		
+		//用户名后端校验 绑定change事件
+		$("#empName_add_input").change(function(){
+			//ajax校验用户名是否可用
+			$.ajax({
+				url:"${APP_PATH}/checkuser",
+				data: {"empName" : this.value},
+				type:"POST",
+				success:function(result){
+					if(result.code == 100){
+						show_validate_msg("#empName_add_input", "success", "用户名可用");
+					}else{
+						show_validate_msg("#empName_add_input", "error", "用户名不可用");
+					}
+				}
+			});
+		});
+		
 		//员工新增 保存事件
 		$("#emp_save_btn").click(function(){
 			//先对要提交给服务器的数据进行校验
@@ -227,7 +244,7 @@
 			}else{
 				show_validate_msg("#email_add_input", "success", "");
 			}
-			return false;
+			return true;
 		}
 		
 		//显示校验信息

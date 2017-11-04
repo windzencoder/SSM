@@ -23,6 +23,22 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 	
 	/**
+	 * 校验用户名
+	 * @param empName
+	 * @return
+	 */
+	@RequestMapping("/checkuser")
+	@ResponseBody
+	public Msg checkUser(@RequestParam("empName") String empName){
+		boolean b = employeeService.checkUser(empName);
+		if (b) {
+			return Msg.success();
+		}else{
+			return Msg.fail();
+		}
+	}
+	
+	/**
 	 * 保存员工
 	 * @return
 	 */
