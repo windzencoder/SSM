@@ -149,8 +149,7 @@
 						<div class="form-group">
 							<label for="inputEmail3" class="col-sm-2 control-label">empName</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="empName_update_input"
-									name="empName" placeholder="empName">
+								<p class="form-control-static" id="empName_update_static" ></p>
 								<span class="help-block"></span>
 							</div>
 						</div>
@@ -440,9 +439,14 @@
 				var editBtn = $('<button></button>').addClass("btn btn btn-primary btn-sm edit_btn")
 					.append($('<span></span>').addClass("glyphicon glyphicon-pencil"))
 					.append("编辑");
+				//为编辑按钮添加自定义的属性，来表示当期员工的id
+				editBtn.attr("edit-id", item.empId);
+				
 				var delBtn = $('<button></button>').addClass("btn btn-danger btn-sm delete_btn")
 					.append($('<span></span>').addClass("glyphicon glyphicon-trash"))
 					.append("删除");
+				
+				
 				var btnTd = $('<td></td>').append(editBtn).append(" ").append(delBtn);
 				$('<tr></tr>').append(empIdTd)
 					.append(empNameTd)
@@ -459,11 +463,29 @@
 			//alert("edit");
 			//1.查出部门信息，显示部门列表
 			getDepts("#empUpdateModel select");
+			//查询员工信息
+			getEmp($(this).attr("edit-id"));
 			//显示模态框
 			$('#empUpdateModel').modal({
 				backdrop:"static"
 			});
 		});
+		
+		//查询员工
+		function getEmp(id){
+			$.ajax({
+				url:"${APP_PATH}/emp/" + id,
+				type:"GET",
+				success:function(result){
+					//alert(JSON.stringify(result));
+					var empData = result.extend.emp;
+					$("#empName_update_static").text(empData.empName);
+					$("#email_update_input").val(empData.empName);
+					$("#empUpdateModel input[name=gender]").val([empData.gender]);
+					$("#empUpdateModel select").val([empData.dId]);
+				}
+			});
+		}
 	
 	</script>
 

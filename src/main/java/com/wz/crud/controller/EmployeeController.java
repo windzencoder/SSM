@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +28,19 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+	
+	/**
+	 * 查询员工
+	 * @PathVariable("id") 从路径中获取id值
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
+	@ResponseBody
+	public Msg getEmp(@PathVariable("id") Integer id){
+		Employee employee = employeeService.getEmp(id);
+		return Msg.success().add("emp", employee);
+	}
 	
 	/**
 	 * 校验用户名
