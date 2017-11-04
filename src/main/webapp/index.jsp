@@ -35,7 +35,7 @@
 		<div class="row">
 			<div class="clo-md-4 col-md-offset-8 text-right">
 				<button class="btn btn-primary" id="emp_add_modal_btn">新增</button>
-				<button class="btn btn-danger">删除</button>
+				<button class="btn btn-danger" id="emp_delete_all_btn">删除</button>
 			</div>
 		</div>
 		<!-- 显示表格数据 -->
@@ -44,6 +44,7 @@
 				<table class="table table-striped" id="emps_table">
 					<thead>
 						<tr>
+							<th><input type="checkbox" id="check_all"/></th>
 							<th>#</th>
 							<th>empName</th>
 							<th>gender</th>
@@ -431,6 +432,7 @@
 			
 			var emps = result.extend.pageInfo.list;
 			$.each(emps, function(index,item){
+				var checkBoxTd = $('<td></td>').append($('<input type="checkbox" class="check_item" />'));
 				var empIdTd = $('<td></td>').append(item.empId);
 				var empNameTd = $('<td></td>').append(item.empName);
 				var gender = item.gender == "M" ? "男" : "女";
@@ -450,7 +452,8 @@
 				delBtn.attr("delete-id", item.empId);
 				
 				var btnTd = $('<td></td>').append(editBtn).append(" ").append(delBtn);
-				$('<tr></tr>').append(empIdTd)
+				$('<tr></tr>').append(checkBoxTd)
+					.append(empIdTd)
 					.append(empNameTd)
 					.append(genderTd)
 					.append(emailTd)
@@ -540,7 +543,7 @@
 			//alert("delete");
 			//alert($(this).parents("tr").find("td:eq(1)").text());
 			
-			var empName = $(this).parents("tr").find("td:eq(1)").text();
+			var empName = $(this).parents("tr").find("td:eq(2)").text();
 			if(confirm("确认删除"+empName+"吗?")){
 				$.ajax({
 					url:"${APP_PATH}/emp/" + $(this).attr("delete-id"),
@@ -553,6 +556,44 @@
 				})
 			}
 		});
+		
+		//全选 全不选
+		$("#check_all").click(function(){
+			//attr后去checkded为undefined，所有用prop
+			//alert($(this).prop("checked"));
+			$(".check_item").prop("checked", $(this).prop("checked"));
+		})
+		$(document).on("click", ".check_item", function(){
+			//判断当前选中元素的是否为5个
+			var flag = $(".check_item:checked").length == $(".check_item").length
+			$("#check_all").prop("checked", flag);
+		});
+		
+		//多个删除
+		$("#emp_delete_all_btn").click(function(){
+			//遍历选中的项目
+			var empNames = "";
+			var del_idstr = "";
+			$.each($(".check_item:checked"), function(){
+				var empName = $(this).parents("tr").find("td:eq(2)").text();
+				empNames += empName+",";
+				del_idstr += $(this).parents("tr").find("td:eq(1)").text()+"-";
+			});
+			empNames = empNames.substring(0, empNames.length-1);
+			del_idstr = del_idstr.substring(0, del_idstr.length-1);
+			if(confirm("确认删除【"+empNames+"】吗?")){
+				//发送ajax请求
+				$.ajax({
+					url:"${APP_PATH}/emp/" + del_idstr,
+					type:"DELETE",
+					success:function(result){
+						alert(result.msg);
+						to_page(currentPage);
+					}
+				});
+			}
+		});
+		
 	
 	</script>
 

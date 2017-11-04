@@ -1,5 +1,6 @@
 package com.wz.crud.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,16 +31,42 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 	
 	/**
-	 * 员工删除
+	 * 单个批量删除二合一
 	 * @param id
 	 * @return
 	 */
+	@RequestMapping(value="/emp/{ids}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public Msg deleteEmpById(@PathVariable("ids") String ids){
+		if (ids.contains("-")) {//批量删除
+			String[] str_ids = ids.split("-");
+			List<Integer> del_ids = new ArrayList<Integer>();
+			for (String string : str_ids) {
+				del_ids.add(Integer.parseInt(string));
+			}
+			employeeService.deleteBatch(del_ids);
+			
+		}else{//单个删除
+			Integer id = Integer.parseInt(ids);
+			employeeService.deleteEmp(id);
+		}
+		
+		return Msg.success();
+	}
+	
+	/**
+	 * 单个员工删除
+	 * @param id
+	 * @return
+	 */
+	/*
 	@RequestMapping(value="/emp/{id}", method=RequestMethod.DELETE)
 	@ResponseBody
 	public Msg deleteEmpById(@PathVariable("id") Integer id){
 		employeeService.deleteEmp(id);
 		return Msg.success();
 	}
+	*/
 	
 	/**
 	 * 如果直接发送ajax的put请求，请求体中有数据，但是employee封装不上

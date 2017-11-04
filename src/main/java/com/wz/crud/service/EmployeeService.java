@@ -70,5 +70,17 @@ public class EmployeeService {
 	public void deleteEmp(Integer id) {
 		employeeMapper.deleteByPrimaryKey(id);
 	}
+
+	/**
+	 * 批量删除
+	 * @param ids
+	 */
+	public void deleteBatch(List<Integer> ids) {
+		EmployeeExample example = new EmployeeExample();
+		Criteria criteria = example.createCriteria();
+		//delete from xxx where emp_id in()
+		criteria.andEmpIdIn(ids);
+		employeeMapper.deleteByExample(example);
+	}
 	
 }
