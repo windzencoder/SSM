@@ -160,12 +160,24 @@
 		
 		//新增员工 模态框
 		$("#emp_add_modal_btn").click(function(){
+			//清除模态框表单数据
+			reset_form("#empAddModel form");
 			//查询部门信息
 			getDepts();
+			//显示模态框
 			$('#empAddModel').modal({
 				backdrop:false
 			});
 		});
+		
+		//表单重置 清除表单样式及内容
+		function reset_form(ele){
+			$(ele)[0].reset();
+			//清空表单样式
+			$(ele).find("*").removeClass("has-error has-success");
+			$(ele).find(".help-block").text("");
+		}
+		
 		//查询所有的部门信息并显示在下拉列表中
 		function getDepts(){
 			$.ajax({
@@ -186,13 +198,16 @@
 			//ajax校验用户名是否可用
 			$.ajax({
 				url:"${APP_PATH}/checkuser",
-				data: {"empName" : this.value},
+				//data: {"empName" : this.value},
+				data: "empName="+this.value,
 				type:"POST",
 				success:function(result){
 					if(result.code == 100){
 						show_validate_msg("#empName_add_input", "success", "用户名可用");
+						$("#emp_save_btn").attr("ajax-va", "success");//保存校验状态 成功
 					}else{
-						show_validate_msg("#empName_add_input", "error", "用户名不可用");
+						show_validate_msg("#empName_add_input", "error", result.extend.va_msg);
+						$("#emp_save_btn").attr("ajax-va", "error");//保存校验状态 失败
 					}
 				}
 			});
@@ -203,6 +218,10 @@
 			//先对要提交给服务器的数据进行校验
 			if(!validate_add_form()){
 				return false;
+			} 
+			//判断之前的ajax用户名校验是否成功，如果成功，则提交
+			if($("#emp_save_btn").attr("ajax-va") == "error"){
+				return false;
 			}
 			var data = $("#empAddModel form").serialize();
 			//模态框数据提交到服务器
@@ -212,10 +231,20 @@
 				type:"POST",
 				success:function(result){
 					//alert(result.msg);
-					//关闭模态框
-					$('#empAddModel').modal('hide');
-					//来到最后一页
-					to_page(totalRecord);
+					if(result.code == 100){
+						//关闭模态框
+						$('#empAddModel').modal('hide');
+						//来到最后一页
+						to_page(totalRecord);
+					}else{
+						//alert(JSON.stringify(result));
+						if(result.extend.errorFields.email != undefined){//邮箱错误
+							show_validate_msg("#email_add_input", "error", result.extend.errorFields.email);
+						}
+						if(result.extend.errorFields.empName != undefined){//员工名称错误
+							show_validate_msg("#empName_add_input", "error", result.extend.errorFields.empName);
+						}
+					}
 				}
 			});
 		})
