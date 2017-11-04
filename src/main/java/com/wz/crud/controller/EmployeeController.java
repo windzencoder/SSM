@@ -30,6 +30,29 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 	
 	/**
+	 * 如果直接发送ajax的put请求，请求体中有数据，但是employee封装不上
+	 * 原因是：Tomcat
+	 * 1.将请求体中的数据，封装为一个map
+	 * 2.request.getParameter("empName")就会从这个map中取值
+	 * 3.SpringMVC封装POJO对象的时候，会把POJO中每个属性的值，通过request.getParameter("empName")取出来
+	 * 
+	 * Ajax发送PUT请求引发的血案：
+	 * PUT请求，请求体中的数据，request.getParameter("empName")为null
+	 * Tomcat一看是put请求，就不会封装请求体中的数据为map，只有post请求才封装
+	 * 
+	 * 更新用户信息
+	 * @return
+	 * value="/emp/{id}" employee中empId为null 修改为value="/emp/{empId}"即可
+	 */
+	@RequestMapping(value="/emp/{empId}", method=RequestMethod.PUT)
+	@ResponseBody
+	public Msg updateEmp(Employee employee){
+		System.out.println("更新用户信息:"+employee);
+		employeeService.updateEmp(employee);
+		return Msg.success();
+	}
+	
+	/**
 	 * 查询员工
 	 * @PathVariable("id") 从路径中获取id值
 	 * @param id

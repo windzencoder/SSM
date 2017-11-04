@@ -54,5 +54,13 @@ public class EmployeeService {
 		Employee employee = employeeMapper.selectByPrimaryKeyWithDept(id);
 		return employee;
 	}
+
+	/**
+	 * 更新用户信息
+	 * @param employee
+	 */
+	public void updateEmp(Employee employee) {
+		employeeMapper.updateByPrimaryKeySelective(employee);
+	}
 	
 }

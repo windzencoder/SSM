@@ -194,7 +194,7 @@
 
 	<script type="text/javascript">
 		
-		var totalRecord;//总记录数
+		var totalRecord,currentPage;//总记录数，当前页
 		
 		//页面加载完成后，直接发送ajax请求，得到分页数据
 		$(function(){
@@ -361,6 +361,7 @@
 					+"第页，总共"+result.extend.pageInfo.pages+"页，总"
 					+result.extend.pageInfo.total+"记录数");
 			totalRecord = result.extend.pageInfo.total;//保存总页数
+			currentPage = result.extend.pageInfo.pageNum;//保存当前页
 		}
 		
 		//解析显示分页条
@@ -465,6 +466,8 @@
 			getDepts("#empUpdateModel select");
 			//查询员工信息
 			getEmp($(this).attr("edit-id"));
+			//把员工的id传递给模态框的更新按钮
+			$("#emp_update_btn").attr("edit-id", $(this).attr("edit-id"));
 			//显示模态框
 			$('#empUpdateModel').modal({
 				backdrop:"static"
@@ -480,12 +483,55 @@
 					//alert(JSON.stringify(result));
 					var empData = result.extend.emp;
 					$("#empName_update_static").text(empData.empName);
-					$("#email_update_input").val(empData.empName);
+					$("#email_update_input").val(empData.email);
 					$("#empUpdateModel input[name=gender]").val([empData.gender]);
 					$("#empUpdateModel select").val([empData.dId]);
 				}
 			});
 		}
+		
+		//点击更新，更新员工信息
+		$("#emp_update_btn").click(function(){
+			//验证邮箱信息
+			var email = $("#email_update_input").val();
+			var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+			if(!regEmail.test(email)){
+				//alert("邮箱格式不正确");
+				show_validate_msg("#email_update_input", "error", "邮箱格式不正确");
+				return false;
+			}else{
+				show_validate_msg("#email_update_input", "success", "");
+			}
+			
+			//alert($("#empUpdateModel form").serialize());
+			
+			//发送ajax请求修改员工信息
+			//方式一 方法post请求，带上_method=PUT
+			/*
+			$.ajax({
+				url:"${APP_PATH}/emp/" + $(this).attr("edit-id"),
+				type:"POST",
+				data:$("#empUpdateModel form").serialize() + "&_method=PUT",
+				success:function(result){
+					alert(JSON.stringify(result));
+				}
+			});
+			*/
+			//方式二 直接发送put请求
+			$.ajax({
+				url:"${APP_PATH}/emp/" + $(this).attr("edit-id"),
+				type:"PUT",
+				data:$("#empUpdateModel form").serialize(),
+				success:function(result){
+					//alert(JSON.stringify(result));
+					//关闭对话框
+					$("#empUpdateModel").modal("hide");
+					//回到本页面
+					to_page(currentPage);
+				}
+			});
+			
+		});
 	
 	</script>
 
