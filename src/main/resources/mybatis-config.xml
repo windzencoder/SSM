@@ -2,6 +2,7 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<settings>
+		<!-- 驼峰转换 -->
 		<setting name="mapUnderscoreToCamelCase" value="true" />
 	</settings>
 
@@ -9,7 +10,7 @@
 		<package name="com.wz.crud.bean" />
 	</typeAliases>
 
-	<!-- 在 MyBatis 配置 xml 中配置拦截器插件 -->
+	<!-- 在 MyBatis 配置 xml 中配置拦截器插件 可选 -->
 	<plugins>
 		<!-- com.github.pagehelper为PageHelper类所在包名 -->
 		<plugin interceptor="com.github.pagehelper.PageInterceptor">

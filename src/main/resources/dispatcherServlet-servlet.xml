@@ -9,9 +9,9 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
 	<!-- SpringMVC的配置文件，包含网站跳转逻辑的控制，配置 -->
-	
+	<!-- 只扫描控制器，需要把use-default-filters设置为false -->
 	<context:component-scan base-package="com.wz" use-default-filters="false">
-		<!-- 只扫描过滤器 -->
+		<!-- 只扫描控制器 -->
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
