@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeExample {
-    protected String orderByClause;
+    protected String orderByClause;//排序
 
     protected boolean distinct;
 
-    protected List<Criteria> oredCriteria;
+    protected List<Criteria> oredCriteria;//条件
 
     public EmployeeExample() {
         oredCriteria = new ArrayList<Criteria>();
@@ -30,7 +30,7 @@ public class EmployeeExample {
         return distinct;
     }
 
-    public List<Criteria> getOredCriteria() {
+    public List<Criteria> getOredCriteria() {//只有get方法
         return oredCriteria;
     }
 
@@ -44,7 +44,7 @@ public class EmployeeExample {
         return criteria;
     }
 
-    public Criteria createCriteria() {
+    public Criteria createCriteria() {//创建查询条件
         Criteria criteria = createCriteriaInternal();
         if (oredCriteria.size() == 0) {
             oredCriteria.add(criteria);
@@ -63,6 +63,7 @@ public class EmployeeExample {
         distinct = false;
     }
 
+    //GeneratedCriteria生成标准
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
@@ -104,6 +105,7 @@ public class EmployeeExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
+        //emp_id为null 不为null 等于多少 不等于多少 大于多少 小于多少 in 
         public Criteria andEmpIdIsNull() {
             addCriterion("emp_id is null");
             return (Criteria) this;
@@ -144,6 +146,7 @@ public class EmployeeExample {
             return (Criteria) this;
         }
 
+        //emp_id在某个范围 参数为List<Integer>
         public Criteria andEmpIdIn(List<Integer> values) {
             addCriterion("emp_id in", values, "empId");
             return (Criteria) this;
@@ -154,6 +157,7 @@ public class EmployeeExample {
             return (Criteria) this;
         }
 
+        //emp_id在某2个值之间
         public Criteria andEmpIdBetween(Integer value1, Integer value2) {
             addCriterion("emp_id between", value1, value2, "empId");
             return (Criteria) this;
@@ -204,6 +208,7 @@ public class EmployeeExample {
             return (Criteria) this;
         }
 
+        //emp_name的模糊查询
         public Criteria andEmpNameLike(String value) {
             addCriterion("emp_name like", value, "empName");
             return (Criteria) this;
@@ -491,6 +496,7 @@ public class EmployeeExample {
             return typeHandler;
         }
 
+        //noValue的没有值的构造方法
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -510,6 +516,7 @@ public class EmployeeExample {
             }
         }
 
+        //一个值的构造方法
         protected Criterion(String condition, Object value) {
             this(condition, value, null);
         }
@@ -523,6 +530,7 @@ public class EmployeeExample {
             this.betweenValue = true;
         }
 
+        //两个值的构造方法
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
         }
