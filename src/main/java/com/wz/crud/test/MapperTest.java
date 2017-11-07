@@ -37,8 +37,7 @@ public class MapperTest {
 	@Test
 	public void testCRUD() {
 
-		// ApplicationContext context = new
-		// ClassPathXmlApplicationContext("applicationContext.xml");
+		// ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		// context.getBean(DepartmentMapper.class);
 
 		System.out.println(departmentMapper);
